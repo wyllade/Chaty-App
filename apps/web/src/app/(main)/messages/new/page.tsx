@@ -25,7 +25,7 @@ export default function NewMessagePage() {
   }, []);
 
   useEffect(() => {
-    if (!query.trim() || !currentUserId) { setResults([]); return; }
+    if (!query.trim() || !currentUserId) return;
 
     const timer = setTimeout(async () => {
       const { data } = await supabase
@@ -37,6 +37,13 @@ export default function NewMessagePage() {
       if (data) setResults(data);
     }, 300);
 
+    return () => clearTimeout(timer);
+  }, [query, currentUserId]);
+
+  useEffect(() => {
+    if (query.trim() || !currentUserId) return;
+
+    const timer = setTimeout(() => setResults([]), 0);
     return () => clearTimeout(timer);
   }, [query, currentUserId]);
 
@@ -78,39 +85,56 @@ export default function NewMessagePage() {
   }
 
   return (
-    <div className="px-4 py-4 pb-20">
+    <div className="px-4 py-4 pb-20 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/messages" className="text-blue-500">&larr; Cancel</Link>
-        <h1 className="font-semibold text-[#262626]">New Message</h1>
+        <Link href="/messages" className="text-sm font-semibold transition-colors" style={{ color: 'var(--color-text-secondary)' }}>
+          ← Cancel
+        </Link>
+        <h1 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>New Message</h1>
         <div className="w-12" />
       </div>
 
-      <input
-        type="text"
-        placeholder="Search users..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none mb-4"
-      />
+      <div className="relative mb-4">
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="input-focus w-full rounded-xl px-4 py-3 text-sm outline-none pl-10"
+          style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-border-light)', color: 'var(--color-text-primary)' }}
+        />
+        <svg className="absolute left-3 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-text-secondary)' }}>
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </div>
 
-      {results.map((user) => (
-        <button
-          key={user.id}
-          onClick={() => startConversation(user.id)}
-          className="flex items-center gap-3 py-3 w-full text-left"
-        >
-          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium shrink-0">
-            {user.username[0].toUpperCase()}
-          </div>
-          <div>
-            <p className="font-semibold text-sm text-[#262626]">{user.username}</p>
-            <p className="text-sm text-gray-400">{user.display_name}</p>
-          </div>
-        </button>
-      ))}
+      <div className="space-y-1">
+        {results.map((user) => (
+          <button
+            key={user.id}
+            onClick={() => startConversation(user.id)}
+            className="flex items-center gap-3 p-3 w-full text-left rounded-xl transition-all hover:glass card-hover"
+          >
+            <div className="w-10 h-10 rounded-full gradient-ring p-[2px] shrink-0">
+              <div className="w-full h-full rounded-full bg-white p-[2px]">
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white font-medium text-sm">
+                  {user.username[0].toUpperCase()}
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{user.username}</p>
+              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{user.display_name}</p>
+            </div>
+          </button>
+        ))}
+      </div>
 
       {query && results.length === 0 && (
-        <p className="text-center text-gray-400 mt-10">No users found</p>
+        <div className="text-center mt-16">
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>No users found</p>
+        </div>
       )}
     </div>
   );

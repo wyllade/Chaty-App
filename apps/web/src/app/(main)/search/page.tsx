@@ -63,46 +63,63 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="px-4 py-4 pb-20">
+    <div className="px-4 py-4 pb-20 animate-fade-in">
       <form onSubmit={handleSearch} className="mb-6">
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full bg-gray-100 rounded-lg px-4 py-3 text-sm outline-none focus:bg-white focus:border focus:border-blue-500"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="input-focus w-full rounded-xl px-4 py-3 text-sm outline-none pl-10"
+            style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-border-light)', color: 'var(--color-text-primary)' }}
+          />
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-text-secondary)' }}>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
       </form>
 
-      {results.map((user) => (
-        <div key={user.id} className="flex items-center gap-3 py-3">
-          <Link href={`/profile/${user.id}`} className="flex items-center gap-3 flex-1">
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
-              {user.username[0].toUpperCase()}
-            </div>
-            <div>
-              <p className="font-semibold text-sm text-[#262626]">{user.username}</p>
-              <p className="text-sm text-gray-400">{user.display_name}</p>
-            </div>
-          </Link>
+      {results.length > 0 && (
+        <div className="space-y-2">
+          {results.map((user, i) => (
+            <div key={user.id} className={`glass rounded-2xl p-3 card-hover flex items-center gap-3 animate-fade-in stagger-${Math.min(i + 2, 10)}`}>
+              <Link href={`/profile/${user.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 rounded-full gradient-ring p-[2px] shrink-0">
+                  <div className="w-full h-full rounded-full bg-white p-[2px]">
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white font-medium text-sm">
+                      {user.username[0].toUpperCase()}
+                    </div>
+                  </div>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>{user.username}</p>
+                  <p className="text-sm truncate" style={{ color: 'var(--color-text-secondary)' }}>{user.display_name}</p>
+                </div>
+              </Link>
 
-          {currentUserId !== user.id && (
-            <button
-              onClick={() => handleFollow(user.id)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold ${
-                followingMap[user.id]
-                  ? 'border border-gray-200 text-[#262626]'
-                  : 'bg-blue-500 text-white'
-              }`}
-            >
-              {followingMap[user.id] ? 'Following' : 'Follow'}
-            </button>
-          )}
+              {currentUserId !== user.id && (
+                <button
+                  onClick={() => handleFollow(user.id)}
+                  className={`shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    followingMap[user.id]
+                      ? 'glass'
+                      : 'btn-gradient text-white shadow-lg shadow-[#FF6B6B]/20'
+                  }`}
+                >
+                  {followingMap[user.id] ? 'Following' : 'Follow'}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      )}
 
       {results.length === 0 && query && (
-        <p className="text-center text-gray-400 mt-10">No users found</p>
+        <div className="text-center mt-16 animate-fade-in">
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>No users found</p>
+        </div>
       )}
     </div>
   );

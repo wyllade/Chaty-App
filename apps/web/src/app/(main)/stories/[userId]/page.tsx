@@ -85,29 +85,41 @@ export default function StoryViewerPage() {
         <img
           src={story.image_url}
           alt="Story"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain animate-scale-in"
         />
 
-        <div className="absolute top-12 left-4 right-4 flex gap-1">
+        <div className="absolute top-12 left-4 right-4 flex gap-1 z-10">
           {stories.map((_, i) => (
-            <div key={i} className="flex-1 h-1 bg-white/30 rounded overflow-hidden">
+            <div key={i} className="story-progress">
               <div
-                className="h-full bg-white rounded transition-all duration-75"
-                style={{
-                  width: i < currentIndex ? '100%' : i === currentIndex ? `${progress * 100}%` : '0%',
-                }}
+                className={`story-progress-fill ${i < currentIndex ? 'played' : ''} ${i === currentIndex ? 'active' : ''}`}
+                style={{ width: i < currentIndex ? '100%' : i === currentIndex ? `${progress * 100}%` : '0%' }}
               />
             </div>
           ))}
         </div>
 
-        <div className="absolute top-16 left-4 right-4 flex items-center justify-between">
-          <span className="text-white font-semibold">{story.user?.username}</span>
-          <button onClick={() => router.back()} className="text-white text-xl">&times;</button>
+        <div className="absolute top-16 left-4 right-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full gradient-ring p-[2px]">
+              <div className="w-full h-full rounded-full bg-black p-[2px]">
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white text-xs font-medium">
+                  {story.user?.username?.[0]?.toUpperCase() || '?'}
+                </div>
+              </div>
+            </div>
+            <span className="text-white font-semibold text-sm">{story.user?.username}</span>
+          </div>
+          <button
+            onClick={() => router.back()}
+            className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white text-lg hover:bg-white/20 transition-colors"
+          >
+            ×
+          </button>
         </div>
 
-        <button onClick={recede} className="absolute left-0 top-0 bottom-0 w-2/5" />
-        <button onClick={advance} className="absolute right-0 top-0 bottom-0 w-3/5" />
+        <button onClick={recede} className="absolute left-0 top-0 bottom-0 w-2/5 z-10 active:bg-white/5 transition-colors" />
+        <button onClick={advance} className="absolute right-0 top-0 bottom-0 w-3/5 z-10 active:bg-white/5 transition-colors" />
       </div>
     </div>
   );

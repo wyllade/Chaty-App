@@ -35,42 +35,47 @@ export default function SignupPage() {
 
     setLoading(true);
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, username, display_name: displayName }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setLoading(false);
+      setError(data.error);
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (authError) {
-      setLoading(false);
-      setError(authError.message);
+    setLoading(false);
+
+    if (signInError) {
+      setError('Account created. Please log in.');
       return;
     }
 
-    if (authData.user) {
-      const { error: profileError } = await supabase.from('users').insert({
-        id: authData.user.id,
-        email,
-        username,
-        display_name: displayName,
-      });
-
-      setLoading(false);
-
-      if (profileError) {
-        setError('Failed to create profile');
-        return;
-      }
-
-      router.push('/auth/login?created=true');
-    }
+    router.push('/');
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold text-[#262626]">Chaty</h1>
-          <p className="mt-2 text-[#8E8E8E]">Create your account</p>
+    <div className="relative flex min-h-screen flex-col items-center justify-center px-6 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#667EEA] via-[#764BA2] to-[#FF6B6B]" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4zIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
+      <div className="blob w-80 h-80 bg-[#667EEA] top-[-5%] right-[-10%] animate-float-slow" style={{ animationDuration: '7s' }} />
+      <div className="blob w-64 h-64 bg-[#764BA2] bottom-[-5%] left-[-10%] animate-float" style={{ animationDelay: '1.5s', animationDuration: '5s' }} />
+      <div className="blob w-40 h-40 bg-[#FF6B6B] top-[30%] left-[20%] animate-float-slow" style={{ animationDelay: '3s' }} />
+
+      <div className="relative w-full max-w-sm glass-strong rounded-2xl p-8 animate-fade-in-up">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">Chaty</h1>
+          <p className="mt-2 text-white/70 text-sm">Create your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -79,44 +84,50 @@ export default function SignupPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-[#DBDBDB] bg-[#FAFAFA] px-4 py-3 text-sm text-[#262626] placeholder-[#8E8E8E] focus:outline-none focus:border-[#0095F6]"
+            className="input-focus w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-[#DBDBDB] bg-[#FAFAFA] px-4 py-3 text-sm text-[#262626] placeholder-[#8E8E8E] focus:outline-none focus:border-[#0095F6]"
+            className="input-focus w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none"
           />
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full rounded-lg border border-[#DBDBDB] bg-[#FAFAFA] px-4 py-3 text-sm text-[#262626] placeholder-[#8E8E8E] focus:outline-none focus:border-[#0095F6]"
+            className="input-focus w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none"
           />
           <input
             type="text"
             placeholder="Display Name"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full rounded-lg border border-[#DBDBDB] bg-[#FAFAFA] px-4 py-3 text-sm text-[#262626] placeholder-[#8E8E8E] focus:outline-none focus:border-[#0095F6]"
+            className="input-focus w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none"
           />
 
-          {error && <p className="text-sm text-[#ED4956]">{error}</p>}
+          {error && <p className="text-sm text-[#FFB347] font-medium">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[#0095F6] py-3 text-sm font-semibold text-white hover:bg-[#0081D6] disabled:opacity-60"
+            className="btn-gradient w-full rounded-xl py-3 text-sm font-semibold text-white disabled:opacity-50"
           >
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+              </span>
+            ) : 'Sign Up'}
           </button>
         </form>
 
-        <p className="mt-12 text-center text-sm text-[#8E8E8E]">
+        <p className="mt-8 text-center text-sm text-white/60">
           Already have an account?{' '}
-          <Link href="/auth/login" className="font-semibold text-[#0095F6]">
+          <Link href="/auth/login" className="font-semibold text-white hover:text-white/80 transition-colors">
             Log In
           </Link>
         </p>

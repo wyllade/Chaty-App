@@ -63,35 +63,56 @@ export default function ActivityPage() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="px-4 py-4 pb-20">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-[#262626]">Activity</h1>
+    <div className="px-4 py-4 pb-20 animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Activity</h1>
         {unreadCount > 0 && (
-          <button onClick={markAllRead} className="text-sm text-blue-500 font-medium">
+          <button
+            onClick={markAllRead}
+            className="text-sm font-semibold btn-gradient rounded-xl px-4 py-2 text-white transition-all hover:shadow-lg hover:shadow-[#FF6B6B]/20"
+          >
             Mark all read
           </button>
         )}
       </div>
 
       {notifications.length === 0 ? (
-        <p className="text-center text-gray-400 mt-20">No notifications yet</p>
-      ) : (
-        notifications.map((n) => (
-          <div
-            key={n.id}
-            onClick={() => !n.read && markRead(n.id)}
-            className="flex items-center gap-3 py-3 border-b border-gray-50 cursor-pointer"
-          >
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium shrink-0">
-              {n.actor?.username?.[0]?.toUpperCase() || '?'}
-            </div>
-            <p className="text-sm text-[#262626] flex-1">
-              <span className="font-semibold">{n.actor?.username}</span>{' '}
-              {NOTIFICATION_LABELS[n.type] || 'interacted with you'}
-            </p>
-            {!n.read && <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+        <div className="text-center mt-20 animate-fade-in-up">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#FF6B6B] to-[#FFB347] flex items-center justify-center text-white text-3xl opacity-50">
+            🔔
           </div>
-        ))
+          <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>No notifications yet</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {notifications.map((n, i) => (
+            <div
+              key={n.id}
+              onClick={() => !n.read && markRead(n.id)}
+              className={`${n.read ? '' : 'unread-accent'} flex items-center gap-3 p-3 rounded-2xl card-hover cursor-pointer transition-all ${
+                n.read ? 'opacity-60' : 'glass'
+              } animate-fade-in stagger-${Math.min(i + 2, 10)}`}
+            >
+              <div className={`w-10 h-10 rounded-full ${n.read ? '' : 'gradient-ring'} p-[2px] shrink-0`}>
+                <div className="w-full h-full rounded-full bg-white p-[2px]">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white text-xs font-medium">
+                    {n.actor?.username?.[0]?.toUpperCase() || '?'}
+                  </div>
+                </div>
+              </div>
+              <p className="text-sm flex-1" style={{ color: 'var(--color-text-primary)' }}>
+                <span className="font-semibold">{n.actor?.username}</span>{' '}
+                {NOTIFICATION_LABELS[n.type] || 'interacted with you'}
+              </p>
+              {!n.read && (
+                <div className="relative">
+                  <span className="w-3 h-3 rounded-full shrink-0 block" style={{ background: 'linear-gradient(135deg, #FF6B6B, #FFB347)' }} />
+                  <span className="badge-pulse absolute inset-0" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

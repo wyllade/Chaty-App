@@ -72,40 +72,54 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="px-4 py-4 pb-20">
+    <div className="px-4 py-4 pb-20 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#262626]">Messages</h1>
-        <Link href="/messages/new" className="text-blue-500 text-lg font-semibold">+</Link>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Messages</h1>
+        <Link
+          href="/messages/new"
+          className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF6B6B] to-[#FFB347] flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-[#FF6B6B]/20 hover:shadow-xl transition-shadow"
+        >
+          +
+        </Link>
       </div>
 
       {conversations.length === 0 ? (
-        <div className="text-center mt-20">
-          <p className="text-lg font-semibold text-[#262626]">No messages</p>
-          <p className="text-sm text-gray-400 mt-1">Start a conversation</p>
+        <div className="text-center mt-20 animate-fade-in-up">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white text-3xl opacity-50">
+            ✉️
+          </div>
+          <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>No messages</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>Start a conversation</p>
         </div>
       ) : (
-        conversations.map((c) => (
-          <Link
-            key={c.id}
-            href={`/messages/${c.id}`}
-            className="flex items-center gap-3 py-3 border-b border-gray-50"
-          >
-            <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium shrink-0">
-              {c.participant.username[0]?.toUpperCase() || '?'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-sm text-[#262626]">{c.participant.username}</span>
-                {c.last_message && (
-                  <span className="text-xs text-gray-400">{formatTimeAgo(c.last_message.created_at)}</span>
-                )}
+        <div className="space-y-2">
+          {conversations.map((c, i) => (
+            <Link
+              key={c.id}
+              href={`/messages/${c.id}`}
+              className={`flex items-center gap-3 p-3 glass rounded-2xl card-hover animate-fade-in stagger-${Math.min(i + 2, 10)}`}
+            >
+              <div className="w-12 h-12 rounded-full gradient-ring p-[2px] shrink-0">
+                <div className="w-full h-full rounded-full bg-white p-[2px]">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-[#667EEA] to-[#764BA2] flex items-center justify-center text-white font-medium">
+                    {c.participant.username[0]?.toUpperCase() || '?'}
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-gray-400 truncate">
-                {c.last_message?.content || (c.last_message?.image_url ? '📷 Photo' : 'No messages yet')}
-              </p>
-            </div>
-          </Link>
-        ))
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{c.participant.username}</span>
+                  {c.last_message && (
+                    <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatTimeAgo(c.last_message.created_at)}</span>
+                  )}
+                </div>
+                <p className="text-sm truncate" style={{ color: 'var(--color-text-secondary)' }}>
+                  {c.last_message?.content || (c.last_message?.image_url ? '📷 Photo' : 'No messages yet')}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       )}
     </div>
   );

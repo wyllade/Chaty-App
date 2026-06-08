@@ -59,15 +59,20 @@ export default function CreatePostPage() {
 
   if (!preview) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white">
-        <h1 className="text-xl font-semibold text-[#262626] mb-6">New Post</h1>
-        <button
-          onClick={() => fileRef.current?.click()}
-          className="flex flex-col items-center gap-3"
-        >
-          <span className="text-5xl">📷</span>
-          <span className="text-blue-500 font-semibold">Choose from Library</span>
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-screen px-6" style={{ background: 'var(--color-surface)' }}>
+        <div className="dashed-border-animate p-12 text-center animate-fade-in-up">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[#FF6B6B] to-[#FFB347] flex items-center justify-center text-white text-4xl shadow-lg shadow-[#FF6B6B]/20 animate-float">
+            📷
+          </div>
+          <h1 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>New Post</h1>
+          <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>Tap to upload a photo</p>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="btn-gradient px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:shadow-[#FF6B6B]/30"
+          >
+            Choose from Library
+          </button>
+        </div>
         <input
           ref={fileRef}
           type="file"
@@ -80,37 +85,50 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-        <button onClick={() => { setPreview(null); setFile(null); setCaption(''); }} className="text-[#262626]">
-          Cancel
-        </button>
-        <h1 className="font-semibold text-[#262626]">New Post</h1>
-        <button
-          onClick={handleShare}
-          disabled={uploading}
-          className="text-blue-500 font-semibold disabled:opacity-50"
-        >
-          {uploading ? 'Sharing...' : 'Share'}
-        </button>
+    <div className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
+      <div className="glass border-b border-white/20 px-4 py-3">
+        <div className="flex items-center justify-between max-w-lg mx-auto">
+          <button
+            onClick={() => { setPreview(null); setFile(null); setCaption(''); }}
+            className="text-sm font-semibold transition-colors"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            Cancel
+          </button>
+          <h1 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>New Post</h1>
+          <button
+            onClick={handleShare}
+            disabled={uploading}
+            className="btn-gradient rounded-xl px-5 py-2 text-sm font-semibold text-white disabled:opacity-50 transition-all hover:shadow-lg hover:shadow-[#FF6B6B]/20"
+          >
+            {uploading ? 'Sharing...' : 'Share'}
+          </button>
+        </div>
       </div>
 
-      <div className="max-w-lg mx-auto">
-        <img src={preview} alt="Preview" className="w-full aspect-square object-cover" />
-        <div className="p-4 space-y-4">
-          <textarea
-            placeholder="Write a caption..."
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            className="w-full text-base text-[#262626] outline-none resize-none min-h-[80px]"
-          />
-          <input
-            type="text"
-            placeholder="Add location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
-          />
+      <div className="max-w-lg mx-auto p-4 animate-fade-in">
+        <div className="glass rounded-2xl overflow-hidden">
+          <div className="relative group">
+            <img src={preview} alt="Preview" className="w-full aspect-square object-cover" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+          </div>
+          <div className="p-4 space-y-4">
+            <textarea
+              placeholder="Write a caption..."
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              className="input-focus w-full rounded-xl px-4 py-3 text-base outline-none resize-none min-h-[80px]"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border-light)', color: 'var(--color-text-primary)' }}
+            />
+            <input
+              type="text"
+              placeholder="Add location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="input-focus w-full rounded-xl px-4 py-3 text-sm outline-none"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border-light)', color: 'var(--color-text-primary)' }}
+            />
+          </div>
         </div>
       </div>
     </div>
