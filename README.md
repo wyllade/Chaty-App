@@ -1,6 +1,6 @@
 # Chaty
 
-A full-stack Instagram-like social application built with Next.js (web), Expo (mobile), and Supabase.
+A full-stack social application built with Next.js (web), Expo (mobile), and Supabase.
 
 ## Tech Stack
 
